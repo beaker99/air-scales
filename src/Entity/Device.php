@@ -3,11 +3,11 @@
 namespace App\Entity;
 
 use App\Entity\User;
-use App\Repository\UnitRepository;
+use App\Repository\DeviceRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: UnitRepository::class)]
-class Unit
+#[ORM\Entity(repositoryClass: DeviceRepository::class)]
+class Device
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -29,9 +29,9 @@ class Unit
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $notes = null;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'microcontrollers')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'devices')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?user $sold_to = null;
+    private ?User $sold_to = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTime $order_date = null;
@@ -107,12 +107,12 @@ class Unit
         return $this;
     }
 
-    public function getSoldTo(): ?user
+    public function getSoldTo(): ?User
     {
         return $this->sold_to;
     }
 
-    public function setSoldTo(?user $sold_to): static
+    public function setSoldTo(?User $sold_to): static
     {
         $this->sold_to = $sold_to;
 

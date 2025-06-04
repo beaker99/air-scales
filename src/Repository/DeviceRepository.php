@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\Unit;
+use App\Entity\Device;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Unit>
+ * @extends ServiceEntityRepository<Device>
  */
-class UnitRepository extends ServiceEntityRepository
+class DeviceRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Unit::class);
+        parent::__construct($registry, Device::class);
     }
 
     //    /**
-    //     * @return Unit[] Returns an array of Unit objects
+    //     * @return Device[] Returns an array of Device objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -31,7 +31,7 @@ class UnitRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Unit
+    //    public function findOneBySomeField($value): ?Device
     //    {
     //        return $this->createQueryBuilder('u')
     //            ->andWhere('u.exampleField = :val')

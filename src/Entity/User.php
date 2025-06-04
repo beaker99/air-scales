@@ -9,7 +9,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use App\Entity\Unit;
+use App\Entity\Device;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
@@ -36,8 +36,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    #[ORM\OneToMany(mappedBy: 'soldTo', targetEntity: Unit::class, orphanRemoval: true)]
-    private Collection $unit;
+    #[ORM\OneToMany(mappedBy: 'sold_to', targetEntity: Device::class)]
+    private Collection $devices;
 
     
     public function getId(): ?int
@@ -114,30 +114,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
     public function __construct()
     {
-        $this->unit = new ArrayCollection();
+        $this->devices = new ArrayCollection();
     }
 
-    public function getMicrocontrollers(): Collection
+    public function getDevices(): Collection
     {
-        return $this->unit;
+        return $this->devices;
     }
 
-    public function addMicrocontroller(Unit $unit): self
+    public function addDevice(Device $device): self
     {
-        if (!$this->unit->contains($unit)) {
-            $this->unit[] = $unit;
-            $unit->setSoldTo($this);
+        if (!$this->devices->contains($device)) {
+            $this->devices[] = $device;
+            $device->setSoldTo($this);
         }
 
         return $this;
     }
 
-    public function removeMicrocontroller(Unit $unit): self
+    public function removeDevice(Device $device): self
     {
-        if ($this->unit->removeElement($unit)) {
+        if ($this->devices->removeElement($device)) {
             // set the owning side to null (unless already changed)
-            if ($unit->getSoldTo() === $this) {
-                $unit->setSoldTo(null);
+            if ($device->getSoldTo() === $this) {
+                $device->setSoldTo(null);
             }
         }
 
