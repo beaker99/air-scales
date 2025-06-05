@@ -1,20 +1,58 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello DashboardController!{% endblock %}
+{% block title %}Dashboard{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <h1>Air Scales Dashboard</h1>
+    {% include '_user_links.html.twig' %}
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    {% if devices|length > 0 %}
+        <table id="device-table" class="display">
+    <thead>
+        <tr>
+            <th>Serial #</th>
+            <th>MAC</th>
+            <th>Firmware</th>
+            {% if is_granted('ROLE_ADMIN') %}
+                <th>Sold To</th>
+            {% endif %}
+            <th>Order Date</th>
+            <th>Ship Date</th>
+            <th>Tracking ID</th>
+            {% if is_granted('ROLE_ADMIN') %}
+                <th>Notes</th>
+            {% endif %}    
+        </tr>
+    </thead>
+    <tbody>
+    {% for device in devices %}
+        <tr>
+            <td>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('app_device_edit', { id: device.id }) }}">
+                        {{ device.serialNumber }}
+                    </a>
+                    {% else %}
+                        {{ device.serialNumber }}
+                {% endif %}
+            </td>
+            <td>{{ device.macAddress }}</td>
+            <td>{{ device.firmwareVersion }}</td>
+            {% if is_granted('ROLE_ADMIN') %}
+                <td>{{ device.soldTo ? device.soldTo.email : '' }}</td>
+            {% endif %}
+            <td>{{ device.orderDate ? device.orderDate|date('Y-m-d') : '' }}</td>
+            <td>{{ device.shipDate ? device.shipDate|date('Y-m-d') : '' }}</td>
+            <td>{{ device.trackingId }}</td>
+            {% if is_granted('ROLE_ADMIN') %}
+                <td>{{ device.notes }}</td>
+            {% endif %}    
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/xampp/htdocs/air-scales/src/Controller/DashboardController.php</code></li>
-        <li>Your template at <code>C:/xampp/htdocs/air-scales/templates/dashboard/index.html.twig</code></li>
-    </ul>
-</div>
+    {% else %}
+        <p>You have no registered devices.</p>
+    {% endif %}
 {% endblock %}
