@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}CalibrationPoint index{% endblock %}
+
+{% block body %}
+    <h1>CalibrationPoint index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>AirPressure</th>
+                <th>Temperature</th>
+                <th>AxleWeight</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for calibration_point in calibration_points %}
+            <tr>
+                <td>{{ calibration_point.id }}</td>
+                <td>{{ calibration_point.airPressure }}</td>
+                <td>{{ calibration_point.temperature }}</td>
+                <td>{{ calibration_point.axleWeight }}</td>
+                <td>
+                    <a href="{{ path('app_calibration_point_show', {'id': calibration_point.id}) }}">show</a>
+                    <a href="{{ path('app_calibration_point_edit', {'id': calibration_point.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_calibration_point_new') }}">Create new</a>
+{% endblock %}

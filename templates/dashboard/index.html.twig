@@ -6,53 +6,31 @@
     <h1>Air Scales Dashboard</h1>
     {% include '_user_links.html.twig' %}
 
-    {% if devices|length > 0 %}
-        <table id="device-table" class="display">
-    <thead>
-        <tr>
-            <th>Serial #</th>
-            <th>MAC</th>
-            <th>Firmware</th>
-            {% if is_granted('ROLE_ADMIN') %}
-                <th>Sold To</th>
-            {% endif %}
-            <th>Order Date</th>
-            <th>Ship Date</th>
-            <th>Tracking ID</th>
-            {% if is_granted('ROLE_ADMIN') %}
-                <th>Notes</th>
-            {% endif %}    
-        </tr>
-    </thead>
-    <tbody>
-    {% for device in devices %}
-        <tr>
-            <td>
-                {% if is_granted('ROLE_ADMIN') %}
-                    <a href="{{ path('app_device_edit', { id: device.id }) }}">
-                        {{ device.serialNumber }}
-                    </a>
-                    {% else %}
-                        {{ device.serialNumber }}
-                {% endif %}
-            </td>
-            <td>{{ device.macAddress }}</td>
-            <td>{{ device.firmwareVersion }}</td>
-            {% if is_granted('ROLE_ADMIN') %}
-                <td>{{ device.soldTo ? device.soldTo.email : '' }}</td>
-            {% endif %}
-            <td>{{ device.orderDate ? device.orderDate|date('Y-m-d') : '' }}</td>
-            <td>{{ device.shipDate ? device.shipDate|date('Y-m-d') : '' }}</td>
-            <td>{{ device.trackingId }}</td>
-            {% if is_granted('ROLE_ADMIN') %}
-                <td>{{ device.notes }}</td>
-            {% endif %}    
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
+        <h2>Your Calibration Points</h2>
 
-    {% else %}
-        <p>You have no registered devices.</p>
-    {% endif %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Pressure</th>
+                    <th>Temperature</th>
+                    <th>Weight</th>
+                    <th>Device</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for point in calibration_points %}
+                    <tr>
+                        <td>{{ point.airPressure }}</td>
+                        <td>{{ point.temperature }}</td>
+                        <td>{{ point.axleWeight }}</td>
+                        <td>{{ point.device.serialNumber ?? 'Unknown' }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="4">No calibration points found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
 {% endblock %}

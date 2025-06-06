@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Device index{% endblock %}
+
+{% block body %}
+    {% include '_user_links.html.twig' %}
+    <h1>Device index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Serial Number</th>
+                <th>Mac Address</th>
+                <th>Mircrocontroller Type</th>
+                <th>Firmware Version</th>
+                <th>Notes</th>
+                <th>Order Date</th>
+                <th>Ship Date</th>
+                <th>Tracking Id</th>
+                <th>Sold To</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for device in devices %}
+            <tr>
+                <td>
+                    <a href="{{ path('app_device_show', {'id': device.id}) }}">
+                        {{ device.serialNumber }}
+                    </a>
+                </td>
+                <td>{{ device.macAddress }}</td>
+                <td>{{ device.entityType }}</td>
+                <td>{{ device.firmwareVersion }}</td>
+                <td>{{ device.notes }}</td>
+                <td>{{ device.orderDate ? device.orderDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ device.shipDate ? device.shipDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ device.trackingId }}</td>
+                {% if device.soldTo %}
+                    <td>{{ device.soldTo.email }}</td>
+                {% else %}
+                    <td></td>
+                {% endif %}
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="10">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_device_new') }}">Create new</a>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}CalibrationPoint{% endblock %}
+
+{% block body %}
+    <h1>CalibrationPoint</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ calibration_point.id }}</td>
+            </tr>
+            <tr>
+                <th>AirPressure</th>
+                <td>{{ calibration_point.airPressure }}</td>
+            </tr>
+            <tr>
+                <th>Temperature</th>
+                <td>{{ calibration_point.temperature }}</td>
+            </tr>
+            <tr>
+                <th>AxleWeight</th>
+                <td>{{ calibration_point.axleWeight }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_calibration_point_index') }}">back to list</a>
+
+    <a href="{{ path('app_calibration_point_edit', {'id': calibration_point.id}) }}">edit</a>
+
+    {{ include('calibration_point/_delete_form.html.twig') }}
+{% endblock %}

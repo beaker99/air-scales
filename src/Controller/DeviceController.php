@@ -3,31 +3,79 @@
 namespace App\Controller;
 
 use App\Entity\Device;
-use App\Form\DeviceTypeForm;
+use App\Form\DeviceForm;
+use App\Repository\DeviceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route(path: '/device')]
+#[Route('/device')]
 final class DeviceController extends AbstractController
 {
-    #[Route('/{id<\d+>}/edit', name: 'app_device_edit')]
-    public function edit(Device $device, Request $request, EntityManagerInterface $em): Response
+    #[Route(name: 'app_device_index', methods: ['GET'])]
+    public function index(DeviceRepository $deviceRepository): Response
     {
-        $form = $this->createForm(DeviceTypeForm::class, $device);
+        return $this->render('device/index.html.twig', [
+            'devices' => $deviceRepository->findAll(),
+        ]);
+    }
+
+    #[Route('/new', name: 'app_device_new', methods: ['GET', 'POST'])]
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $device = new Device();
+        $form = $this->createForm(DeviceForm::class, $device);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em->flush();
-            $this->addFlash('success', 'Device updated successfully!');
-            return $this->redirectToRoute('app_dashboard');
+            $entityManager->persist($device);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_device_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->render('device/new.html.twig', [
+            'device' => $device,
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/{id}', name: 'app_device_show', methods: ['GET'])]
+    public function show(Device $device): Response
+    {
+        return $this->render('device/show.html.twig', [
+            'device' => $device,
+        ]);
+    }
+
+    #[Route('/{id}/edit', name: 'app_device_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Device $device, EntityManagerInterface $entityManager): Response
+    {
+        $form = $this->createForm(DeviceForm::class, $device);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_device_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('device/edit.html.twig', [
-            'form' => $form->createView(),
             'device' => $device,
+            'form' => $form,
         ]);
+    }
+
+    #[Route('/{id}', name: 'app_device_delete', methods: ['POST'])]
+    public function delete(Request $request, Device $device, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$device->getId(), $request->getPayload()->getString('_token'))) {
+            $entityManager->remove($device);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_device_index', [], Response::HTTP_SEE_OTHER);
     }
 }
